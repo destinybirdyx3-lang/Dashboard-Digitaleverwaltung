@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Digitalisierungsstand {{ d.kommune }} – Stand {{ stichtag_de }}</title>
+<meta name="author" content="Stadt {{ d.kommune }}">
+<meta name="description" content="Kompakte Übersicht über den Digitalisierungsstand der Verwaltungsleistungen">
+<meta name="keywords" content="Digitalisierung, OZG, Verwaltungsleistungen, LeiKa">
+<style>
+  @page { size: A4; margin: 14mm 14mm 16mm 14mm;
+    @bottom-left { content: "Quelle: {{ quellen_kurz }} · Methodik {{ d.reifegrad_version }}";
+      font-family: "Fira Sans", "DejaVu Sans", sans-serif; font-size: 7pt; color: #545b66; }
+    @bottom-right { content: "Lizenz: Datenlizenz Deutschland – Namensnennung 2.0";
+      font-family: "Fira Sans", "DejaVu Sans", sans-serif; font-size: 7pt; color: #545b66; } }
+  :root { --text: #1b1f24; --muted: #545b66; --line: #d5d9e0; --accent: #0b4f8a;
+          --s0: #d5d9e0; --s1: #c9dcef; --s2: #8fb6de; --s3: #3a7cc0; --s4: #0b4f8a; }
+  * { box-sizing: border-box; }
+  body { font-family: "Fira Sans", "DejaVu Sans", sans-serif; color: var(--text); font-size: 9.5pt; margin: 0; }
+  header { border-bottom: 2pt solid var(--accent); padding-bottom: 3mm; margin-bottom: 5mm; }
+  h1 { font-size: 17pt; margin: 0 0 1mm; }
+  .sub { color: var(--muted); margin: 0; }
+  .demo { border: 1pt solid #9a3412; color: #9a3412; padding: 1.5mm 3mm; margin: 0 0 4mm; font-weight: bold; }
+  h2 { font-size: 11pt; margin: 6mm 0 2.5mm; }
+  .tiles { display: flex; gap: 3mm; }
+  .tile { flex: 1; border: 0.75pt solid var(--line); border-radius: 2mm; padding: 3mm; }
+  .tile .label { font-size: 8pt; color: var(--muted); margin: 0; }
+  .tile .value { font-size: 20pt; font-weight: bold; margin: 1mm 0 0; }
+  .tile .hint { font-size: 7.5pt; color: var(--muted); margin: 1mm 0 0; }
+  .stack { display: flex; height: 7mm; border-radius: 1mm; overflow: hidden; border: 0.5pt solid var(--line); }
+  .stack span { display: block; height: 100%; }
+  table { width: 100%; border-collapse: collapse; }
+  caption { text-align: left; font-size: 8pt; color: var(--muted); padding-bottom: 1mm; caption-side: bottom; }
+  th, td { text-align: left; padding: 1.1mm 1.5mm; border-bottom: 0.5pt solid var(--line); vertical-align: middle; }
+  th { font-size: 8pt; color: var(--muted); font-weight: normal; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  .swatch { display: inline-block; width: 3mm; height: 3mm; border: 0.5pt solid #8a929e; margin-right: 1.5mm; vertical-align: -0.3mm; }
+  .bar { height: 3.2mm; background: var(--accent); }
+  .bar-track { background: #eef1f5; width: 100%; }
+  footer { margin-top: 5mm; font-size: 7.5pt; color: var(--muted); }
+  footer p { margin: 0 0 1mm; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Digitalisierungsstand {{ d.kommune }}</h1>
+  <p class="sub">Verwaltungsleistungen nach Leistungskatalog (LeiKa) · Stand {{ stichtag_de }}</p>
+</header>
+{% if d.demo %}<p class="demo">DEMODATEN – diese Übersicht enthält synthetische Testdaten und keine echten Werte.</p>{% endif %}
+
+<main>
+<section aria-labelledby="kz">
+  <h2 id="kz">Kennzahlen</h2>
+  <div class="tiles">
+    <div class="tile"><p class="label">Online verfügbar</p><p class="value">{{ pct(k.online_quote) }}</p>
+      <p class="hint">{{ anteil(k.online_quote) }} Leistungen</p></div>
+    <div class="tile"><p class="label">Online-Leistungen</p><p class="value">{{ zahl(k.online_quote.zaehler if k.online_quote else None) }}</p>
+      <p class="hint">in kommunaler Zuständigkeit</p></div>
+    <div class="tile"><p class="label">Neu online (30 Tage)</p><p class="value">{{ zahl(k.neu_online_30_tage) }}</p>
+      <p class="hint">Leistungen</p></div>
+    <div class="tile"><p class="label">Veränderung zum Vorjahr</p><p class="value">{{ pp(k.veraenderung_vorjahr_prozentpunkte) }}</p>
+      <p class="hint">Prozentpunkte Online-Quote</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="rg">
+  <h2 id="rg">Reifegrad der {{ zahl(k.grundgesamtheit) }} Leistungen</h2>
+  <div class="stack" aria-hidden="true">
+    {% for s in d.reifegrad_verteilung %}{% if s.zaehler %}<span style="width: {{ breite(s.zaehler, k.grundgesamtheit) }}%; background: var(--s{{ s.stufe }});"></span>{% endif %}{% endfor %}
+  </div>
+  <table class="legend">
+    <caption>Verteilung der Leistungen auf die Reifegradstufen 0 bis 4</caption>
+    <thead><tr><th scope="col">Stufe</th><th scope="col" class="num">Leistungen</th><th scope="col" class="num">Anteil</th></tr></thead>
+    <tbody>
+    {% for s in d.reifegrad_verteilung %}
+      <tr><th scope="row"><span class="swatch" style="background: var(--s{{ s.stufe }});" aria-hidden="true"></span>{{ s.stufe }} · {{ s.label }}</th>
+        <td class="num">{{ zahl(s.zaehler) }}</td><td class="num">{{ pct(s) }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section aria-labelledby="tf">
+  <h2 id="tf">Online-Quote nach Themenfeld</h2>
+  <table>
+    <caption>Anteil der Leistungen je OZG-Themenfeld, die online beantragt werden können</caption>
+    <thead><tr><th scope="col">Themenfeld</th><th scope="col" class="num">Online</th><th scope="col" class="num">Quote</th><th scope="col" style="width: 38%;"><span style="position:absolute; left:-9999px;">Balken</span></th></tr></thead>
+    <tbody>
+    {% for t in themen %}
+      <tr><th scope="row">{{ t.label }}</th><td class="num">{{ zahl(t.zaehler) }} / {{ zahl(t.nenner) }}</td>
+        <td class="num">{{ pct(t) }}</td>
+        <td aria-hidden="true"><div class="bar-track"><div class="bar" style="width: {{ breite(t.zaehler, t.nenner) }}%;"></div></div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+</main>
+
+<footer>
+  <p><strong>Datenstand:</strong> {% for q in d.quellen %}{{ q.name }}: {{ datum(q.datenstand) }}{% if not loop.last %} · {% endif %}{% endfor %}</p>
+  <p><strong>Methodik:</strong> Grundgesamtheit sind Leistungen mit kommunalem Vollzug laut LeiKa-Typisierung. „Online verfügbar“ = Reifegrad 3 oder 4. Details und Rohdaten: Dashboard, Bereich „Methodik &amp; Daten“.</p>
+</footer>
+</body>
+</html>
