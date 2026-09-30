@@ -1,0 +1,50 @@
+# Stammdaten der Dienstleistungen einer Verwaltung (paginiert, Delta über bearbeitet).
+# Keine personenbezogenen Felder, keine Geheimnisse.
+query Dienstleistungen($verwaltung: Int!, $limit: Int!, $offset: Int!, $seit: String) {
+  verwaltung(id: $verwaltung) {
+    dienstleistungen(
+      limit: $limit
+      offset: $offset
+      filter: { bearbeitet: { gte: $seit } }
+      order: { id: { order: "asc" } }
+    ) {
+      totalCount
+      edges {
+        node {
+          id
+          externe_id
+          leistungsname
+          leistungsbezeichnung
+          digitalisiert
+          exportfaehig
+          oeffentlich_anzeigen
+          in_listen_anzeigen
+          sichtbar_von_tag
+          sichtbar_von_monat
+          sichtbar_von_jahr
+          sichtbar_bis_tag
+          sichtbar_bis_monat
+          sichtbar_bis_jahr
+          erstellt
+          bearbeitet
+          hat_kurztext: kurztext
+          kosten
+          bearbeitungsdauer
+          unterlagen
+          leikaschluessel(limit: 50) { edges { node { schluessel } } }
+          infodienst_dienstleistung { leikaschluessel aktualisiert }
+          onlinedienste(limit: 50) { edges { node { id } } }
+          formulare(limit: 50) { edges { node { id } } }
+          formulare_downloads(limit: 1) { totalCount }
+          formulare_links(limit: 1) { totalCount }
+          dokumente(limit: 1) { totalCount }
+          terminvorlagen(limit: 50) { edges { node { id intern } } }
+          einrichtungen(limit: 50) { edges { node { id } } }
+          themenfelder(limit: 50) { edges { node { id name } } }
+          kostenpunkte(limit: 1) { totalCount }
+          links(limit: 100) { edges { node { id erreichbar } } }
+        }
+      }
+    }
+  }
+}

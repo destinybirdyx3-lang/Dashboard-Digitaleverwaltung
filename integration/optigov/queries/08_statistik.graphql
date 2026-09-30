@@ -1,0 +1,10 @@
+# Serverseitig aggregierte Statistik (bevorzugt). Zulässige Werte für $datensatz bei optiGov erfragen.
+query Statistik($verwaltung: Int!, $datensatz: String!, $von: String!, $bis: String!) {
+  statistik(
+    verwaltung: $verwaltung
+    datensatz: $datensatz
+    filter: { datum_start: $von, datum_ende: $bis }
+  ) {
+    serien { name bezeichner werte einheit }
+  }
+}

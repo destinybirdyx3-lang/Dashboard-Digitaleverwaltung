@@ -1,0 +1,18 @@
+# Organisationsstruktur (Dezernat/Amt/Fachbereich) - ohne Personen.
+query Einrichtungen($verwaltung: Int!, $limit: Int!, $offset: Int!) {
+  verwaltung(id: $verwaltung) {
+    einrichtungen(limit: $limit, offset: $offset, order: { id: { order: "asc" } }) {
+      totalCount
+      edges {
+        node {
+          id
+          name
+          kurzbezeichnung
+          oeffentlich_anzeigen
+          einrichtungstyp { id name }
+          uebergeordnete_einrichtung { id }
+        }
+      }
+    }
+  }
+}

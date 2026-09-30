@@ -1,0 +1,25 @@
+# LeiKa-Katalog in optiGov inkl. Zuordnung zu Dienstleistungen.
+query Leikaschluessel($limit: Int!, $offset: Int!) {
+  alleLeikaschluessel(limit: $limit, offset: $offset, order: { id: { order: "asc" } }) {
+    totalCount
+    edges {
+      node {
+        id
+        schluessel
+        bezeichnung
+        bezeichnung2
+        leistungsgruppierung
+        verrichtung
+        typ
+        leistungstyp
+        sdg_code
+        sdg_informationsbereich
+        status_code
+        status_bezeichnung
+        portalverbund_lagen_codes
+        bearbeitet
+        dienstleistungen(limit: 50) { edges { node { id } } }
+      }
+    }
+  }
+}

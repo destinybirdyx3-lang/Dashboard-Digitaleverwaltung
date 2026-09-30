@@ -1,0 +1,12 @@
+# Querschnittsfähigkeiten: nur IDs/Flags, keine Zertifikate/Tokens/Zugangsdaten.
+query VerwaltungFaehigkeiten($verwaltung: Int!) {
+  verwaltung(id: $verwaltung) {
+    id
+    name
+    bundesland
+    bund_id { id umgebung ablaufdatum }
+    muk { id umgebung }
+    modulkonfiguration { buergerservice meet meet_formulare warteschlange dms_d3 muk }
+    gebiete(limit: 20) { edges { node { name schluessel } } }
+  }
+}

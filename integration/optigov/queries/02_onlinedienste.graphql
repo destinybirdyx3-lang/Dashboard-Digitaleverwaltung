@@ -1,0 +1,23 @@
+# Onlinedienste inkl. Formular-Anbieter (ohne FormularServer-Zugangsdaten).
+query Onlinedienste($verwaltung: Int!, $limit: Int!, $offset: Int!) {
+  verwaltung(id: $verwaltung) {
+    onlinedienste(limit: $limit, offset: $offset, order: { id: { order: "asc" } }) {
+      totalCount
+      edges {
+        node {
+          id
+          externe_id
+          name
+          typ
+          url
+          vertrauensniveau
+          zahlungsweise
+          erstellt
+          bearbeitet
+          formular { id }
+          dienstleistungen(limit: 50) { edges { node { id } } }
+        }
+      }
+    }
+  }
+}
