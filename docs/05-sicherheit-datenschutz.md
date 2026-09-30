@@ -35,9 +35,10 @@ Das GraphQL-Schema enthält in denselben Endpunkten Passwörter, Tokens und Bür
 Mutationen. Deshalb gilt ein mehrstufiger Schutz:
 
 1. **Eigener technischer Client** (`Client` + `Rolle`) nur für das Dashboard. Die `Rolle` bekommt
-   ausschließlich die Rechte `dienstleistung`, `einrichtung`, `formular` und – falls für
-   Zählwerte nötig – `antrag`/`terminvereinbarung`. **Nicht** vergeben werden `root`,
-   `administration`, `verwaltung`, `buerger`, `account`, `rolle`, `mitarbeiter` und `chat`.
+   ausschließlich die Rechte `dienstleistung`, `einrichtung` und `formular`. **Nicht**
+   vergeben werden `root`, `administration`, `verwaltung`, `buerger`, `account`, `rolle`,
+   `mitarbeiter`, `chat`, `antrag`, `antrag_dienstleistung`, `terminvereinbarung`,
+   `schalter` und `schalter_mitarbeiter`.
    Mit optiGov klären, ob Rollen zwischen Lesen und Schreiben unterscheiden (siehe Dokument 7).
    Andernfalls greifen die Maßnahmen 2 und 3.
 2. **Persistierte Abfragen / Allowlist:** Der ETL-Code sendet ausschließlich die Abfragen aus
@@ -48,7 +49,7 @@ Mutationen. Deshalb gilt ein mehrstufiger Schutz:
    - lehnt Abfragen ab, deren Hash nicht auf der Allowlist steht
    - Denylist für Felder als zusätzliche Sicherung (`passwort`, `password`, `token`,
      `zertifikat`, `generated_secret`, `buerger`, `buerger_*`, `email`, `notiz`, `daten`,
-     `mitarbeiter` …)
+     `mitarbeiter`, `leiter`, `antraege`, `terminvereinbarungen`, `warteschlangentickets`, `statistik`, `logs` …)
 4. **Antwortvalidierung:** `pydantic`-Modelle mit `extra="forbid"`. Tauchen unerwartete Felder
    auf, bricht der Lauf ab und es gibt einen Alarm.
 5. **Geheimnisverwaltung:** Die Client-Zugangsdaten liegen im Vault und werden regelmäßig
@@ -58,13 +59,12 @@ Mutationen. Deshalb gilt ein mehrstufiger Schutz:
 
 | Thema | Umsetzung |
 |-------|-----------|
-| **Datenminimierung (Art. 5 Abs. 1 lit. c, Art. 25)** | Es werden keine personenbezogenen Daten abgerufen. Nutzungsdaten fließen nur als Zählwerte (`totalCount`, `statistik`). |
-| **Kleinzahlen-Schutz** | Öffentlich werden Zellen mit weniger als 5 Fällen (Leistung × Monat) als „< 5" ausgewiesen, damit keine Rückschlüsse auf Einzelpersonen möglich sind, z. B. bei seltenen Anträgen. |
-| **VVT (Art. 30)** | Eintrag für das Verfahren „Digitalisierungs-Dashboard", auch wenn nur aggregiert gearbeitet wird. Der ETL-Client *könnte* technisch auf personenbezogene Daten zugreifen. |
-| **Schwellwertanalyse / DSFA (Art. 35)** | Schwellwertanalyse dokumentieren. Voraussichtlich ist keine DSFA nötig, weil nur aggregiert wird. |
+| **Datenminimierung (Art. 5 Abs. 1 lit. c, Art. 25)** | Abgerufen werden nur Angebotsdaten: Leistungen, Onlinedienste, Formulare, Organisationseinheiten. Keine personenbezogenen Daten, keine Nutzungs- oder Vorgangsdaten (Anträge, Termine, Wartemarken, `statistik`), auch nicht als Zählwerte. |
+| **VVT (Art. 30)** | Mit dem DSB klären, ob ein Eintrag nötig ist. Das Verfahren selbst verarbeitet keine personenbezogenen Daten, der ETL-Client *könnte* technisch aber darauf zugreifen. Die Schutzmaßnahmen aus 5.3 dokumentieren. |
+| **Schwellwertanalyse / DSFA (Art. 35)** | Schwellwertanalyse dokumentieren. Eine DSFA ist voraussichtlich nicht nötig, weil keine personenbezogenen Daten verarbeitet werden. |
 | **Öffentliche Seite** | keine Cookies, kein Tracking, keine Einbindung Dritter (Schriften, Skripte und Karten selbst gehostet). Damit ist **kein Consent-Banner** nötig. Optional Matomo im cookielosen Modus, selbst gehostet, IP anonymisiert. |
 | **Server-Logs** | IP-Adressen gekürzt oder nach maximal 7 Tagen gelöscht |
-| **Auftragsverarbeitung** | AV-Vertrag mit dem Hoster, falls extern. Der optiGov-Vertrag deckt den Zweck „Statistik" ab (prüfen). |
+| **Auftragsverarbeitung** | AV-Vertrag mit dem Hoster, falls extern (für Server-Logs der Webseite). |
 | **Pflichtseiten** | Impressum, Datenschutzerklärung, Erklärung zur Barrierefreiheit mit Feedback-Möglichkeit |
 
 ## 5.5 Barrierefreiheit (BITV 2.0 / WCAG 2.2 AA / EN 301 549)
@@ -77,10 +77,9 @@ Mutationen. Deshalb gilt ein mehrstufiger Schutz:
 
 ## 5.6 Mitbestimmung (LPVG NRW)
 Eignet sich eine technische Einrichtung zur Verhaltens- oder Leistungskontrolle der
-Beschäftigten, ist sie mitbestimmungspflichtig. Auswertungen je Fachbereich, etwa zu
-Durchlaufzeiten oder Online-Quoten, können das berühren. Deshalb gilt:
-- **Keine** Auswertung nach Mitarbeitenden. `Antrag.mitarbeiter`, `Aktivitaet` und
-  `Zustaendigkeit.mitarbeiter` werden nicht abgerufen.
-- Durchlaufzeiten nur auf Ebene der Leistung und erst ab Mindestfallzahlen.
-- Den Personalrat in Phase 0 informieren, die Kennzahlen offenlegen, bei Bedarf eine
-  Dienstvereinbarung schließen.
+Beschäftigten, ist sie mitbestimmungspflichtig. Das Dashboard ist so geschnitten, dass es
+das nicht leistet:
+- Es gibt keine Personen-, Vorgangs- oder Bearbeitungsdaten: keine Anträge, keine
+  Durchlaufzeiten, keine `Aktivitaet`, keine Mitarbeiter- oder Zuständigkeitsdaten.
+- Ausgewertet wird nur das Leistungsangebot je Organisationseinheit.
+- Der Personalrat wird in Phase 0 trotzdem informiert und bekommt die Kennzahlen offengelegt.

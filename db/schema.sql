@@ -1,5 +1,6 @@
 -- Entwurf des Datenmodells (PostgreSQL 16). In der Umsetzung als dbt-Modelle / Migrationen.
--- Grundsatz: Es werden keine personenbezogenen Daten gespeichert.
+-- Grundsatz: nur Angebotsdaten (Leistungen, Onlinedienste, Formulare, Organisationseinheiten).
+-- Keine personenbezogenen Daten, keine Nutzungs- oder Vorgangsdaten (Anträge, Termine, Statistik).
 
 CREATE SCHEMA IF NOT EXISTS raw;
 CREATE SCHEMA IF NOT EXISTS core;
@@ -62,7 +63,6 @@ CREATE TABLE core.dienstleistung (
     oeffentlich            boolean NOT NULL,
     aktuell_sichtbar       boolean NOT NULL,     -- oeffentlich_anzeigen + sichtbar_von/bis ausgewertet
     selbstauskunft_digital boolean NOT NULL,     -- optiGov "digitalisiert"
-    exportfaehig           boolean NOT NULL,
     hat_beschreibung       boolean NOT NULL,
     hat_kosten             boolean NOT NULL,
     hat_unterlagen         boolean NOT NULL,
@@ -147,23 +147,6 @@ CREATE TABLE mart.kpi_tag (
     PRIMARY KEY (stichtag, kpi, dimension)
 );
 
-CREATE TABLE mart.nutzung_monat (
-    monat             date     NOT NULL,         -- erster Tag des Monats
-    leika_schluessel  char(14),
-    dienstleistung_id integer  NOT NULL,
-    kanal             text     NOT NULL CHECK (kanal IN ('online_antrag', 'online_termin', 'warteschlange')),
-    anzahl            integer  NOT NULL CHECK (anzahl >= 0),
-    PRIMARY KEY (monat, dienstleistung_id, kanal)
-);
-
--- Öffentliche Sicht mit Kleinzahlen-Schutz (< 5 wird unterdrückt)
-CREATE VIEW mart.nutzung_monat_oeffentlich AS
-SELECT monat, leika_schluessel, kanal,
-       CASE WHEN sum(anzahl) < 5 THEN NULL ELSE sum(anzahl) END AS anzahl,
-       sum(anzahl) < 5 AS unterdrueckt
-FROM mart.nutzung_monat
-GROUP BY monat, leika_schluessel, kanal;
-
 CREATE TABLE mart.qualitaet_befund (
     stichtag          date    NOT NULL,
     befund            text    NOT NULL,          -- 'ohne_leika', 'leika_unbekannt', 'nicht_gemeldet', 'nicht_verlinkt', 'dienst_defekt', 'widerspruch_selbstauskunft', 'veraltet', 'unvollstaendig'
@@ -173,6 +156,18 @@ CREATE TABLE mart.qualitaet_befund (
     details           jsonb   NOT NULL DEFAULT '{}'
 );
 CREATE INDEX ON mart.qualitaet_befund (stichtag, befund);
+
+-- Erzeugte Exporte (PDF-Kurzbericht, CSV/XLSX, Diagramme) je Stichtag
+CREATE TABLE mart.export (
+    stichtag          date        NOT NULL,
+    art               text        NOT NULL CHECK (art IN ('kurzbericht_pdf', 'steuerungsbericht_pdf', 'leistungen_csv', 'leistungen_xlsx', 'kpi_csv', 'diagramm_svg')),
+    sichtbarkeit      text        NOT NULL CHECK (sichtbarkeit IN ('oeffentlich', 'intern')),
+    pfad              text        NOT NULL,
+    sha256            text        NOT NULL,
+    methodik_version  text        NOT NULL,
+    erzeugt_am        timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (stichtag, art)
+);
 
 -- ───────────────────────── Rechte (Least Privilege) ───────────────────────────────────────
 -- CREATE ROLE etl_writer  LOGIN;  -- schreibt raw/core/mart

@@ -17,7 +17,7 @@ Messbare Projektziele:
 |------|-----------|
 | Transparenz für alle | Öffentliche Version, barrierefrei nach BITV 2.0 / WCAG 2.2 AA |
 | Tagesaktualität | Alle Quellen werden täglich bis 06:00 Uhr aktualisiert. Der Datenstand ist pro Quelle sichtbar. |
-| Steuerungswirkung | Die Fachbereiche sehen ihre Lücken, z. B. „häufig nachgefragt, aber nicht online" |
+| Steuerungswirkung | Die Organisationseinheiten sehen ihre Lücken, z. B. „EfA-Dienst verfügbar, aber nicht verlinkt" |
 | Datenqualität | Fehlende LeiKa-Zuordnungen, defekte Links und Abweichungen zum PVOG werden sichtbar und sinken messbar |
 | Rechtssicherheit | Freigaben von ISB und DSB liegen vor. Der Personalrat ist beteiligt. Keine personenbezogenen Daten im Dashboard. |
 
@@ -25,13 +25,14 @@ Messbare Projektziele:
 
 | Zielgruppe | Sicht | Zugang |
 |------------|-------|--------|
-| Bürgerinnen, Bürger, Unternehmen, Presse, Politik | **Öffentliche Sicht**: Gesamtstand, Themenfelder, Leistungssuche mit Link zum Onlinedienst, Trend, Open-Data-Download | anonym, ohne Cookies |
-| Verwaltungsvorstand, Digitalisierungsteam | **Steuerungssicht**: Priorisierungsmatrix, Nutzungszahlen, Benchmark, Zielerreichung | intern, SSO |
+| Bürgerinnen, Bürger, Unternehmen, Presse, Politik | **Öffentliche Sicht**: Gesamtstand, Themenfelder, Leistungssuche mit Link zum Onlinedienst, Trend, **Export als Kurzbericht (PDF) und Daten (CSV/XLSX)** | anonym, ohne Cookies |
+| Verwaltungsvorstand, Digitalisierungsteam | **Steuerungssicht**: Priorisierungsliste, Benchmark, Zielerreichung | intern, SSO |
 | Fachbereiche / Ämter | **Fachbereichssicht**: eigene Leistungen, Lücken, Datenqualitäts-Aufgaben | intern, SSO, gefiltert nach Organisationseinheit |
 | Portalredaktion | **Qualitätssicht**: fehlende LeiKa-Zuordnung, tote Links, Abweichungen zum PVOG, veraltete Texte | intern, SSO |
 
-Die öffentliche Sicht enthält **nur aggregierte, nicht personenbezogene Daten**. Kleine
-Fallzahlen werden unterdrückt (siehe Dokument 5).
+Das Dashboard wertet **nur das Angebot** aus: Leistungen, Onlinedienste, Formulare und
+Organisationseinheiten. Nutzungs- und Vorgangsdaten (Anträge, Termine, `statistik`) und
+personenbezogene Daten werden nicht abgerufen.
 
 ## 1.3 Umfang
 
@@ -41,11 +42,14 @@ Fallzahlen werden unterdrückt (siehe Dokument 5).
 - Ein eigenes Reifegradmodell auf Leistungsebene (Stufe 0 bis 4)
 - Historisierung als täglicher Snapshot, damit Trends sichtbar werden
 - Öffentliches Frontend, internes Frontend und Open-Data-Export (CSV/JSON)
+- **Export des Dashboards:** tagesaktueller Kurzbericht „Digitalisierungsstand auf einen Blick"
+  als barrierefreies PDF, Datenexport je Ansicht (CSV/XLSX) und Diagramme als Bild (SVG/PNG)
 - Betriebs-, Sicherheits- und Datenschutzkonzept
 
 **Nicht im Umfang (vorerst)**
 - Schreibende Zugriffe auf optiGov (das Dashboard liest nur)
-- Auswertungen auf Ebene einzelner Mitarbeitender (mitbestimmungspflichtig, fachlich nicht nötig)
+- Nutzungs- und Vorgangsdaten aus optiGov (Anträge, Termine, Wartemarken, `statistik`)
+- Personenbezogene Daten jeder Art, auch keine Auswertungen nach Mitarbeitenden
 - Anbindung von Fachverfahren. Möglicher Ausbau in Phase 4.
 
 ## 1.4 Phasen und Meilensteine
@@ -60,10 +64,10 @@ Phase 4  Ausbau & Regelbetrieb    ░░░░░░░░░░░░░░░�
 
 ### Phase 0: Klärung und Zugänge (ca. 3 Wochen)
 - Offene Fragen aus [Dokument 7](07-offene-fragen.md) klären. Die wichtigsten betreffen optiGov:
-  gibt es einen reinen Lesezugang, welche Werte hat `statistik.datensatz`, welche Status gibt es?
+  gibt es einen reinen Lesezugang, und welche Werte haben `Onlinedienst.typ` und `vertrauensniveau`?
 - Einen technischen optiGov-Client mit eigener, minimaler Rolle einrichten (Abschnitt 5.3)
 - Schutzbedarfsfeststellung und Datenschutz-Schwellwertanalyse durchführen, Eintrag im VVT anlegen
-- Personalrat informieren und eine Dienstvereinbarung vorbereiten, falls nötig
+- Personalrat informieren (ausgewertet wird nur je Organisationseinheit, es gibt keine Personen- oder Vorgangsdaten)
 - Hosting festlegen (kommunales Rechenzentrum oder IT-Dienstleister)
 
 **Meilenstein M0:** Zugänge vorhanden, Rahmen mit ISB, DSB und Personalrat abgestimmt.
@@ -74,6 +78,7 @@ Phase 4  Ausbau & Regelbetrieb    ░░░░░░░░░░░░░░░�
   LeiKa-Schlüssel? Wie viele davon kennt das FIM-Portal, wie viele das PVOG?
 - Das Reifegradmodell an echten Daten kalibrieren und mit den Fachbereichen abstimmen
 - Einen einfachen Prototyp mit 5 bis 8 Kern-Kennzahlen bauen
+- Inhalt des PDF-Kurzberichts mit dem Product Owner festlegen
 
 **Meilenstein M1:** Kennzahlenkatalog ist abgenommen und die Datenqualität bekannt.
 
@@ -81,6 +86,7 @@ Phase 4  Ausbau & Regelbetrieb    ░░░░░░░░░░░░░░░�
 - Produktive ETL-Strecke mit täglichem Lauf, Monitoring und Alarmierung
 - Datenmodell mit Staging, Core, Mart und Snapshots, dazu automatische Datentests
 - Internes Frontend mit SSO, Steuerungs-, Fachbereichs- und Qualitätssicht
+- Exportfunktion: PDF-Kurzbericht, CSV/XLSX je Ansicht, Diagramme als SVG/PNG
 - Sicherheitsprüfung: Penetrationstest nach OWASP ASVS L2, Abgleich mit dem IT-Grundschutz-Check
 
 **Meilenstein M2:** Das interne Dashboard ist produktiv. Die Fachbereiche pflegen ihre Daten nach.
@@ -97,7 +103,7 @@ Phase 4  Ausbau & Regelbetrieb    ░░░░░░░░░░░░░░░�
 - Benchmark mit Vergleichskommunen (Essen, Duisburg, Oberhausen und weitere) über `open-ars`
 - Zielwerte und Prognose, z. B. „Wann erreichen wir 80 % Online-Verfügbarkeit?"
 - FIM-Prozesse und -Datenschemata als Reifegradmerkmal (Ende-zu-Ende-Fähigkeit)
-- Eventuell Nutzungsdaten aus Fachverfahren
+- Monatliches Archiv der Kurzberichte (PDF) für Politik und Presse
 - Quartalsweise Review der Kennzahlen mit dem Verwaltungsvorstand
 
 ## 1.5 Rollen
@@ -123,7 +129,7 @@ Phase 4  Ausbau & Regelbetrieb    ░░░░░░░░░░░░░░░�
 | Das Feld `digitalisiert` in optiGov ist uneinheitlich gepflegt | mittel | hoch | Reifegrad aus mehreren Merkmalen ableiten, nicht aus einem einzelnen Flag. Plausibilitätscheck gegen das PVOG. |
 | Open-PVOG ändert sich (z. B. ist `export_datum` bereits deprecated) | mittel | mittel | Validierung gegen das Schema, Vertragstests, Datenstand anzeigen |
 | Die öffentlichen Zahlen werden als „Ranking" missverstanden | mittel | mittel | Methodik offen erklären, Kontext zu den Zuständigkeiten (Bund, Land, Kommune) geben |
-| Mitbestimmung verzögert den Start | mittel | mittel | Personalrat früh einbinden, keine Auswertung nach Mitarbeitenden |
+| Mitbestimmung verzögert den Start | niedrig | mittel | Personalrat früh informieren. Es gibt keine Auswertung nach Personen und keine Vorgangsdaten. |
 | Rate-Limits der Bundes-APIs | niedrig | niedrig | Nächtlicher Delta-Abruf, Backoff, Caching |
 
 W = Wahrscheinlichkeit, A = Auswirkung

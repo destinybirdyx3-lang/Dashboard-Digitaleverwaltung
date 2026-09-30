@@ -54,28 +54,47 @@ hohe Verfügbarkeit.
 | 02:00 | Data Hub: CSV-Export für `051170000000` (+ `includeAbove`) sowie Vergleichs-ARS | Voll |
 | 02:15 | FIM: Steckbriefe mit `updated_since=<letzter Lauf>` | Delta (Voll am Sonntag) |
 | 02:30 | optiGov: Stammdaten (Dienstleistung, Onlinedienst, Formular, Einrichtung, LeiKa) | Delta über `bearbeitet`, Voll-Abgleich am Sonntag |
-| 03:00 | optiGov: Nutzung des Vortags (`statistik` bzw. Zählabfragen mit `totalCount`) | inkrementell |
 | 03:30 | dbt run + dbt test | Abbruch bei fehlgeschlagenen Tests. Veröffentlicht wird dann nicht, der Vortag bleibt stehen. |
 | 04:00 | Snapshot-Export → öffentliche Seite, Open Data | atomarer Austausch |
+| 04:15 | Export-Paket erzeugen: PDF-Kurzbericht, CSV/XLSX, Diagramme als SVG | atomarer Austausch |
 
 - **Datenstand-Anzeige:** Jede Kachel zeigt die Aktualität ihrer Quelle, z. B. „PVOG-Stand 29.09.2026".
 - **Fehlertoleranz:** Fällt eine Quelle aus, bleiben ihre Daten vom Vortag erhalten und werden gekennzeichnet.
 - **Monitoring:** Job-Status, Laufzeit und Anzahl der Datensätze gehen an Prometheus und Grafana. Alarm bei Fehlern oder Sprüngen um mehr als 20 %.
 
-## 4.4 Umgebungen und Deployment
+## 4.4 Exportfunktion
+
+Das Dashboard soll sich als Bericht mit den wichtigsten Fakten exportieren lassen. Die
+Exporte entstehen **nachts auf dem Server** aus denselben Mart-Daten wie die Webseite.
+Zahlen im Export und auf der Seite sind dadurch immer identisch, und die öffentliche Seite
+bleibt rein statisch.
+
+| Export | Inhalt | Technik |
+|--------|--------|---------|
+| **Kurzbericht (PDF)** | 2 Seiten „Digitalisierungsstand Mülheim an der Ruhr auf einen Blick": Stichtag, Online-Quote, Reifegradverteilung, Trend, Top-Themenfelder, neu online gegangene Leistungen, Methodik-Hinweis, Quellen mit Datenstand | Vorlage in **Typst** oder HTML + **WeasyPrint**, erzeugt als **PDF/UA** (barrierefrei, getaggt) |
+| **Interner Steuerungsbericht (PDF)** | zusätzlich Priorisierungsliste, Organisationseinheiten, Qualitätsbefunde, Benchmark | wie oben, nur im internen Bereich |
+| **Daten (CSV / XLSX)** | Leistungsliste mit Reifegrad, Links und Organisationseinheit; KPI-Zeitreihen | direkt aus `mart`, UTF-8, Metadatenblatt mit Stichtag und Lizenz |
+| **Aktuelle Ansicht** | Export der gerade gefilterten Ansicht (CSV) und Druckansicht (Print-CSS) | clientseitig aus dem bereits geladenen JSON, kein Serveraufruf |
+| **Diagramme** | jedes Diagramm als SVG/PNG mit Titel, Quelle und Stichtag | ECharts-Export bzw. serverseitig vorgerendert |
+| **Archiv** | Kurzbericht zum Monatsende, dauerhaft abrufbar | versionierte Ablage |
+
+Jeder Export trägt Stichtag, Datenstand je Quelle, Methodik-Version und Lizenzhinweis.
+
+## 4.5 Umgebungen und Deployment
 - Umgebungen DEV / TEST / PROD. TEST nutzt eine optiGov-Test-Verwaltung, falls vorhanden.
 - CI-Pipeline: Lint, Typecheck, Unit-Tests, dbt-Tests gegen Fixtures, SAST (Semgrep),
   Abhängigkeitsprüfung (OSV/Trivy), Container-Scan, SBOM (CycloneDX), signierte Images (cosign)
 - Infrastruktur als Code, Konfiguration über Umgebungsvariablen, Geheimnisse im Vault
   (HashiCorp Vault / OpenBao) oder in K8s-Secrets mit Verschlüsselung
 
-## 4.5 Repository-Struktur (Zielbild)
+## 4.6 Repository-Struktur (Zielbild)
 
 ```
 etl/            Python-Paket: Clients (optigov, fim, datahub), Loader, CLI
 dbt/            Modelle staging/core/mart, Tests, Doku
 api/            FastAPI (intern)
 web/            Frontend (Build-Ziele: internal, public)
+reports/        Vorlagen für PDF-Kurzbericht und Steuerungsbericht
 integration/    Allowlist-Queries, API-Notizen
 db/             Schema / Migrationen
 deploy/         Container, Helm/Compose, Proxy-Konfiguration

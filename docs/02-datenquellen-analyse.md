@@ -16,12 +16,12 @@ tatsächlichen Wertebereiche (Status-Codes, Enum-Werte, Füllgrad) prüft Phase 
 | OZG-Zuordnung (OZG-ID, Themenfeld) | – | ✅ `ozg[]` | ✅ `ozgid`, `ozg_bezeichnung` |
 | EU-SDG-relevant? | ✅ `sdg_code` | ✅ `sdg`, `sdg_relevant` | – |
 | Flächendeckung / EfA | – | – | ✅ `art_flaechendeckung` |
-| Wie stark wird genutzt? | ✅ Anträge, Termine, `statistik` | – | – |
+| Welche Organisationseinheit ist zuständig? | ✅ `Einrichtung`-Hierarchie | – | – |
 | Gibt es FIM-Stammtexte, Prozesse, Datenschemata? | – | ✅ | – |
 | Vergleich mit anderen Kommunen | – | – | ✅ `open-ars` + `open-pvog/{ars}` |
 
 **Kernaussage:** Nur zusammen ergeben die drei Quellen ein vollständiges Bild.
-- **optiGov** sagt, was Mülheim *anbietet* und wie es *genutzt* wird.
+- **optiGov** sagt, was Mülheim *anbietet* und welche Organisationseinheit dafür zuständig ist.
 - **FIM** liefert, was die Leistung *ist*: Zuständigkeitstyp, OZG-Zuordnung, Standardisierung.
 - **Open-PVOG** zeigt, was *bundesweit sichtbar* ist, ob es *funktioniert* und wie *flächendeckend* es ist.
 
@@ -38,7 +38,6 @@ kommt der **ARS** hinzu.
 |------|---------------------|
 | `id`, `leistungsname`, `leistungsbezeichnung` | Anzeige |
 | `digitalisiert: Boolean!` | Selbstauskunft „digital". **Nicht im `DienstleistungFilterInput` enthalten**, lässt sich also nur clientseitig auswerten. |
-| `exportfaehig: Boolean!` | Hinweis auf die PVOG-Meldung (XZuFi-Export). **Klären, was genau das bedeutet.** |
 | `oeffentlich_anzeigen`, `in_listen_anzeigen`, `sichtbar_von_*`/`sichtbar_bis_*` | Grundgesamtheit: nur aktive, öffentliche Leistungen zählen |
 | `erstellt`, `bearbeitet` | Aktualität der Pflege, Delta-Abruf |
 | `leikaschluessel { schluessel … }` | **Join-Schlüssel** (n:m) |
@@ -62,20 +61,6 @@ kommt der **ARS** hinzu.
 → Kerninformation für „online verfügbar". Die Domain der `url` zeigt, ob es ein eigener Dienst,
 ein EfA-Dienst oder ein Landesdienst ist.
 
-**`Antrag`**: `id`, `status`, `erstellt`, `bearbeitet`, `formular{id}`, `dienstleistung{id}`.
-→ **Nutzung:** Online-Anträge pro Leistung und Monat, Statusverteilung, grobe Durchlaufzeit.
-`buerger`, `notiz`, `chats` und `dateien` werden **nie** abgefragt.
-
-**`Terminvereinbarung`**: `termin`, `status`, `erstellt`, `storniert`, `schalter{einrichtung{id}}`, `terminvorlagen{dienstleistung{id}}`.
-→ Online-Terminbuchungen pro Leistung und Einrichtung. `buerger_*`, `daten`, `notiz` werden **nie** abgefragt.
-
-**`statistik(verwaltung, datensatz, filter)`** liefert fertig aggregierte Zeitreihen
-(`serien{name bezeichner werte einheit}`), filterbar nach Datum, Dienstleistungen, Formularen
-und Einrichtungen.
-→ **Bevorzugter Weg für Nutzungszahlen**, weil die Aggregation serverseitig passiert und keine
-Einzeldatensätze fließen. **Die zulässigen Werte für `datensatz` sind nicht dokumentiert. Bei
-optiGov erfragen.**
-
 **`Verwaltung.modulkonfiguration`** (`buergerservice`, `meet`, `warteschlange`, `dms_d3`, `muk`)
 und das Vorhandensein von `bund_id` / `muk` (nur als Boolean)
 → Querschnittsfähigkeiten: BundID, MUK (Unternehmenskonto), Videoberatung, DMS-Anbindung
@@ -85,6 +70,11 @@ für die Ende-zu-Ende-Verarbeitung.
 
 ### 2.2.2 Kritisch: Was **nicht** abgerufen werden darf
 
+**Grundsatzentscheidung:** Aus optiGov wird ausschließlich das **Angebot** gelesen, also
+Dienstleistungen, Onlinedienste, Formulare, LeiKa-Schlüssel und Organisationseinheiten.
+**Nutzungs- und Vorgangsdaten** (Anträge, Termine, Wartemarken, die Funktion `statistik`)
+werden **nicht** verwendet, auch nicht als Zählwerte.
+
 Das Schema legt Geheimnisse und personenbezogene Daten über dieselbe API offen. Die Integration
 muss das technisch ausschließen, nicht nur per Konvention.
 
@@ -92,7 +82,8 @@ muss das technisch ausschließen, nicht nur per Konvention.
 |-----------|----------------|
 | **Zugangsdaten und Geheimnisse** | `LDAPZugang.password`, `ExchangeServer.passwort`, `DmsD3.passwort`/`api_schluessel`, `FormularServer.passwort`/`benutzer`, `Infodienst.token`, `Verwaltung.adressomat_token`, `Widget.services_adressomat_token`, `Client.generated_secret`, `BundID.zertifikat`, `Muk.zertifikat`, `zweiFaktor*`-Queries |
 | **Personenbezogene Daten Bürger/Unternehmen** | `Buerger` (komplett), `Unternehmen`, `Antrag.buerger`, `Antrag.notiz`, `Antrag.transaktionsbezeichner`, `Chat`, `Nachricht`, `Datei`, `Terminvereinbarung.buerger_*`/`daten`/`notiz`/`stornierungsnachricht`, `Warteschlangenticket.daten`, `Antragsanfrage` |
-| **Personenbezogene Daten Beschäftigte** | `Mitarbeiter` (Namen, Kontakt), `Account`, `Aktivitaet` (Protokoll mit Account-Bezug), `Antrag.mitarbeiter`, `Zustaendigkeit.mitarbeiter`, `logs` |
+| **Nutzungs- und Vorgangsdaten** (bewusst ausgeschlossen) | `statistik`, `Antrag`, `alleTerminvereinbarungen`/`terminvereinbarungen`, `Warteschlangenticket`, `terminvereinbarungen_heute`, `warteschlangentickets_heute`, `terminmoeglichkeiten` |
+| **Personenbezogene Daten Beschäftigte** | `Mitarbeiter` (Namen, Kontakt), `Einrichtung.leiter`/`stellvertretende_leiter`/`mitarbeiter`, `Einrichtung.telefon`/`email`/`fax`, `Account`, `Aktivitaet` (Protokoll mit Account-Bezug), `Antrag.mitarbeiter`, `Zustaendigkeit.mitarbeiter`, `logs` |
 | **Alle Mutations** | `erstelle*`, `bearbeite*`, `loesche*`, `buche*`, `aktualisiere*` usw. |
 
 → Umsetzung in Abschnitt 5.3: eigene Rolle, Allowlist mit persistierten Abfragen und ein
@@ -158,12 +149,12 @@ Was daraus folgt:
    bilden den **„Digitalisierungstrichter"**.
 2. **Selbstauskunft gegen Außensicht:** optiGov (`digitalisiert`, Onlinedienst) gegen PVOG
    (`url`, `online_status`). Abweichungen sind Qualitätsbefunde.
-3. **Angebot gegen Nachfrage:** Online-Verfügbarkeit gegen Nutzung (Anträge, Termine,
-   `statistik`). Daraus entsteht die **Priorisierungsmatrix**: stark nachgefragte Leistungen
-   ohne Onlinedienst zuerst digitalisieren.
+3. **Schnelle Erfolge (Quick Wins):** Leistungen, für die im PVOG für Mülheim bereits ein
+   Onlinedienst von Land, Bund oder als EfA-Lösung existiert (`includeAbove=true`), den Mülheim
+   im eigenen Portal aber noch nicht verlinkt hat. Hier reicht oft Verlinken statt Entwickeln.
 4. **Eigenentwicklung gegen EfA:** Aus der Domain der Onlinedienst-URL und `art_flaechendeckung`
    ablesen, wie viel Mülheim nachnutzt und wie viel es selbst baut.
-5. **Kanalverschiebung:** Online-Anträge und Online-Termine im Verhältnis zu Vor-Ort-Terminen
-   und Wartemarken im Zeitverlauf.
+5. **Organisationseinheiten:** Reifegrad je Dezernat, Amt oder Fachbereich über die
+   `Einrichtung`-Hierarchie. So sieht jede Einheit ihre eigenen Lücken.
 6. **Standardisierungsgrad:** Existieren für eine Leistung FIM-Stammtext, -Prozess und
    -Datenschema? Das zeigt, wie gut sie auf Ende-zu-Ende vorbereitet ist.

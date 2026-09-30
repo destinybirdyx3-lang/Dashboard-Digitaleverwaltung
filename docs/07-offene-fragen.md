@@ -2,9 +2,9 @@
 
 ## An optiGov / Fachadministration
 1. Gibt es einen **reinen Lesezugang** (Rolle ohne Schreibrechte)? Unterscheiden die Rechte in `Rolle` (z. B. `dienstleistung: true`) zwischen Lesen und Schreiben?
-2. Welche Werte für `statistik(datensatz: …)` gibt es, und welche Serien liefern sie?
-3. Welche Werte haben `Antrag.status`, `Terminvereinbarung.status`, `Onlinedienst.typ`, `vertrauensniveau` und `zahlungsweise`?
-4. Was genau bedeuten `Dienstleistung.digitalisiert` und `exportfaehig`, und wer pflegt sie?
+2. Welche Werte haben `Onlinedienst.typ`, `vertrauensniveau` und `zahlungsweise`?
+3. Was genau bedeutet `Dienstleistung.digitalisiert`, und wer pflegt das Feld?
+4. Lässt sich die Rolle so zuschneiden, dass Anträge, Termine und `statistik` technisch gar nicht lesbar sind?
 5. Wie authentifiziert sich ein technischer Client (OAuth2 Client Credentials?), und gibt es Rate-Limits?
 6. Enthält `alleLeikaschluessel` den vollständigen LeiKa-Katalog oder nur zugeordnete Schlüssel?
 7. Ist `Gebiet.schluessel` der ARS? Dann ließe sich die Verwaltung eindeutig darüber identifizieren.

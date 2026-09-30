@@ -16,7 +16,6 @@ query Dienstleistungen($verwaltung: Int!, $limit: Int!, $offset: Int!, $seit: St
           leistungsname
           leistungsbezeichnung
           digitalisiert
-          exportfaehig
           oeffentlich_anzeigen
           in_listen_anzeigen
           sichtbar_von_tag

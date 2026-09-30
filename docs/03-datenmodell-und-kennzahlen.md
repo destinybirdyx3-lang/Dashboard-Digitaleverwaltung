@@ -15,8 +15,7 @@
 │ ozg[], sdg      │        │  ├ Onlinedienst    │        │ flaechendeckung     │
 │ adressat        │        │  ├ Formular        │        │ aktiv, ozgid        │
 │ stammtext?      │        │  ├ Terminvorlage   │        └─────────────────────┘
-└─────────────────┘        │  ├ Einrichtung ─► Amt/FB
-                           │  └ Antrag/Termin (nur Zählwerte)
+└─────────────────┘        │  └ Einrichtung ─► Amt/FB
                            └────────────────────┘
 ```
 
@@ -75,21 +74,18 @@ Snapshots vergleichbar, oder sie werden nachberechnet.
 | **Online-Quote je OZG-Themenfeld** | wie oben, gruppiert nach `ozg.themenfeld` | FIM |
 | **Online-Quote je Adressat** | Bürger / Unternehmen | FIM |
 | **SDG-Erfüllung** | SDG-relevante Leistungen mit Stufe ≥ 3 / alle SDG-relevanten | FIM, optiGov |
-| **Top-Leistungen online** | Top 20 nach Nutzung, jeweils mit Reifegrad und Link | optiGov |
+| **Neu online** | Leistungen, die in den letzten 30 Tagen Stufe 3 erreicht haben, mit Link | Snapshots |
 | **Trend** | Online-Quote pro Tag, Woche, Monat | Snapshots |
-| **Online-Anträge pro Monat** | Summe, k-anonymisiert | optiGov `statistik`/`antraege.totalCount` |
-| **Online gebuchte Termine pro Monat** | Summe | optiGov |
+| **Online-Terminbuchung** | Anteil der Leistungen mit online buchbarem Termin (Terminvorlage vorhanden, also Konfiguration, keine Buchungsdaten) | optiGov |
 
 ### Interne Steuerungskennzahlen
 
 | KPI | Formel / Beschreibung |
 |-----|-----------------------|
-| **Priorisierungsmatrix** | x = Nachfrage (Anträge + Termine je Leistung), y = Reifegrad. Quadrant „hohe Nachfrage, Stufe < 3" ist die Digitalisierungs-Backlog-Liste. |
-| **Online-Anteil der Nachfrage** | Online-Anträge / (Online-Anträge + Vor-Ort-Termine) je Leistung |
-| **Durchlaufzeit (indikativ)** | Median `bearbeitet − erstellt` für Anträge mit Endstatus. Mit Vorsicht deuten, denn `bearbeitet` ist nicht zwingend der Abschluss. |
+| **Priorisierungsliste** | Ohne Nutzungsdaten, nach klaren Regeln: (1) SDG-Pflicht, aber Stufe < 3; (2) Quick Win: im PVOG gibt es für Mülheim einen Onlinedienst von Land, Bund oder EfA, im Portal ist aber keiner verlinkt; (3) kommunal zuständig und Stufe ≤ 1. Später optional eine fachliche Gewichtung durch die Fachbereiche. |
 | **EfA-Quote** | nachgenutzte Onlinedienste / alle Onlinedienste |
 | **Benchmark** | Online-Quote Mülheim gegen Vergleichskommunen (PVOG-Sicht, gleiche Methodik) |
-| **Fachbereichs-Ranking (intern)** | Online-Quote je Einrichtung (Amt / FB) |
+| **Online-Quote je Organisationseinheit (intern)** | je Dezernat, Amt oder Fachbereich über die `Einrichtung`-Hierarchie |
 
 ### Qualitätskennzahlen (Portalredaktion)
 
@@ -104,13 +100,16 @@ Snapshots vergleichbar, oder sie werden nachberechnet.
 | **Veraltete Beschreibung** | `bearbeitet` älter als 12 Monate |
 | **Unvollständige Beschreibung** | Kosten, Unterlagen, Bearbeitungsdauer oder Zuständigkeit fehlen |
 
+Bewusst **nicht** im Katalog: Antrags-, Termin- und Nutzungszahlen sowie Durchlaufzeiten.
+Das Dashboard misst das digitale **Angebot**, nicht dessen Nutzung (siehe Abschnitt 2.2.2).
+
 ## 3.5 Schichten der Datenhaltung
 
 | Schicht | Inhalt | Aufbewahrung |
 |---------|--------|--------------|
 | `raw` | Unveränderte API-Antworten als JSONB mit Abrufzeit und Hash. **Nur Felder aus der Allowlist.** | 30 Tage |
 | `core` | Bereinigte Entitäten: `leistung`, `dienstleistung`, `onlinedienst`, `einrichtung`, `pvog_eintrag`, `fim_steckbrief`, Brückentabellen | aktueller Stand plus SCD2-Historie |
-| `mart` | `leistung_reifegrad_tag` (Snapshot je Tag und Leistung), `kpi_tag`, `nutzung_monat`, `qualitaet_befund` | unbegrenzt (nur aggregiert, keine personenbezogenen Daten) |
+| `mart` | `leistung_reifegrad_tag` (Snapshot je Tag und Leistung), `kpi_tag`, `qualitaet_befund`, `export` | unbegrenzt (nur aggregiert, keine personenbezogenen Daten) |
 | `public` | Aus `mart` erzeugte JSON- und CSV-Snapshots für die öffentliche Seite und Open Data | versioniert |
 
 Den Schemaentwurf enthält [`db/schema.sql`](../db/schema.sql).
