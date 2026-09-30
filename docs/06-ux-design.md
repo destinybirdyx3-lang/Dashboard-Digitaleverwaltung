@@ -16,13 +16,13 @@
 | **Leistungen finden** | Suche und Filter (Thema, Reifegrad, Adressat), Liste mit Reifegrad-Badge und „Jetzt online erledigen"-Link |
 | **Entwicklung** | Zeitverlauf der Reifegradverteilung (gestapelte Fläche), Meilensteine |
 | **Methodik & Open Data** | Definitionen, Quellen, Datenstand, CSV/JSON-Download, API-Hinweis, Lizenz (Datenlizenz Deutschland – Namensnennung 2.0) |
-| **Bericht & Export** | Kurzbericht als PDF zum Herunterladen, Archiv der Monatsberichte, Datenexport (CSV/XLSX) |
+| **Bericht & Export** | Übersicht als PDF (1 Seite) zum Herunterladen, Archiv zum Monatsende, Datenexport (CSV/XLSX) |
 
 ## 6.3 Seitenstruktur – intern (zusätzlich)
 
 | Seite | Inhalte |
 |-------|--------|
-| **Steuerung** | Priorisierungsliste (SDG-Pflicht, Quick Wins, kommunale Lücken), Ziel-Ist-Vergleich, Benchmark mit Vergleichskommunen, interner Steuerungsbericht als PDF |
+| **Steuerung** | Priorisierungsliste (SDG-Pflicht, Quick Wins, kommunale Lücken), Ziel-Ist-Vergleich, Benchmark mit Vergleichskommunen |
 | **Organisationseinheiten** | Online-Quote je Dezernat, Amt oder Fachbereich, Drill-down auf die Leistungsliste |
 | **Datenqualität** | Aufgabenliste der Befunde (Abschnitt 3.4) mit Filter nach Fachbereich, Export als Arbeitsliste |
 
@@ -34,11 +34,11 @@
 - Leere oder unvollständige Daten sichtbar kennzeichnen statt sie wegzulassen.
 
 ## 6.5 Export in der Oberfläche
-- Jede Seite hat oben rechts einen Button **„Exportieren"** mit den Optionen: Kurzbericht (PDF),
+- Jede Seite hat oben rechts einen Button **„Exportieren"** mit den Optionen: Übersicht (PDF, 1 Seite),
   diese Ansicht (CSV), Druckansicht.
 - Jedes Diagramm hat ein Menü: als Bild speichern (SVG/PNG), Daten als CSV, Tabelle anzeigen.
-- Der PDF-Kurzbericht folgt demselben Aufbau wie die Überblicksseite. Wer die Seite kennt,
-  findet sich im Bericht sofort zurecht.
+- Die PDF-Übersicht ist bewusst kompakt: eine Seite, nur die Kennzahlen der Überblicksseite,
+  kein Fließtext. Details gibt es im Dashboard und im CSV/XLSX-Export.
 - Exporte sind barrierefrei: PDF/UA mit Tags und Alternativtexten, CSV mit Kopfzeile.
 
 ## 6.6 Nutzerforschung

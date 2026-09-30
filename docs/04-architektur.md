@@ -56,7 +56,7 @@ hohe Verfügbarkeit.
 | 02:30 | optiGov: Stammdaten (Dienstleistung, Onlinedienst, Formular, Einrichtung, LeiKa) | Delta über `bearbeitet`, Voll-Abgleich am Sonntag |
 | 03:30 | dbt run + dbt test | Abbruch bei fehlgeschlagenen Tests. Veröffentlicht wird dann nicht, der Vortag bleibt stehen. |
 | 04:00 | Snapshot-Export → öffentliche Seite, Open Data | atomarer Austausch |
-| 04:15 | Export-Paket erzeugen: PDF-Kurzbericht, CSV/XLSX, Diagramme als SVG | atomarer Austausch |
+| 04:15 | Export-Paket erzeugen: PDF-Übersicht (1 Seite), CSV/XLSX, Diagramme als SVG | atomarer Austausch |
 
 - **Datenstand-Anzeige:** Jede Kachel zeigt die Aktualität ihrer Quelle, z. B. „PVOG-Stand 29.09.2026".
 - **Fehlertoleranz:** Fällt eine Quelle aus, bleiben ihre Daten vom Vortag erhalten und werden gekennzeichnet.
@@ -71,12 +71,11 @@ bleibt rein statisch.
 
 | Export | Inhalt | Technik |
 |--------|--------|---------|
-| **Kurzbericht (PDF)** | 2 Seiten „Digitalisierungsstand Mülheim an der Ruhr auf einen Blick": Stichtag, Online-Quote, Reifegradverteilung, Trend, Top-Themenfelder, neu online gegangene Leistungen, Methodik-Hinweis, Quellen mit Datenstand | Vorlage in **Typst** oder HTML + **WeasyPrint**, erzeugt als **PDF/UA** (barrierefrei, getaggt) |
-| **Interner Steuerungsbericht (PDF)** | zusätzlich Priorisierungsliste, Organisationseinheiten, Qualitätsbefunde, Benchmark | wie oben, nur im internen Bereich |
+| **Übersicht (PDF)** | **Eine Seite, kompakt:** „Digitalisierungsstand Mülheim an der Ruhr" mit Stichtag, 4 Kennzahl-Kacheln (Online-Quote, Online-Leistungen, neu online, Veränderung zum Vorjahr), Reifegradverteilung als ein Balken, Online-Quote je Themenfeld als kleine Balkengrafik, Fußzeile mit Quellen und Datenstand. Kein Fließtext, kein Vorwort, keine Zielwerte. | Vorlage in **Typst** oder HTML + **WeasyPrint**, erzeugt als **PDF/UA** (barrierefrei, getaggt) |
 | **Daten (CSV / XLSX)** | Leistungsliste mit Reifegrad, Links und Organisationseinheit; KPI-Zeitreihen | direkt aus `mart`, UTF-8, Metadatenblatt mit Stichtag und Lizenz |
 | **Aktuelle Ansicht** | Export der gerade gefilterten Ansicht (CSV) und Druckansicht (Print-CSS) | clientseitig aus dem bereits geladenen JSON, kein Serveraufruf |
 | **Diagramme** | jedes Diagramm als SVG/PNG mit Titel, Quelle und Stichtag | ECharts-Export bzw. serverseitig vorgerendert |
-| **Archiv** | Kurzbericht zum Monatsende, dauerhaft abrufbar | versionierte Ablage |
+| **Archiv** | Übersicht zum Monatsende, dauerhaft abrufbar | versionierte Ablage |
 
 Jeder Export trägt Stichtag, Datenstand je Quelle, Methodik-Version und Lizenzhinweis.
 
@@ -94,7 +93,7 @@ etl/            Python-Paket: Clients (optigov, fim, datahub), Loader, CLI
 dbt/            Modelle staging/core/mart, Tests, Doku
 api/            FastAPI (intern)
 web/            Frontend (Build-Ziele: internal, public)
-reports/        Vorlagen für PDF-Kurzbericht und Steuerungsbericht
+reports/        Vorlage für die einseitige PDF-Übersicht
 integration/    Allowlist-Queries, API-Notizen
 db/             Schema / Migrationen
 deploy/         Container, Helm/Compose, Proxy-Konfiguration

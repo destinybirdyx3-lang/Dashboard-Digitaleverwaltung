@@ -17,7 +17,7 @@ und dem **Dashboard Digitale Verwaltung (Open-PVOG / Data Hub)** verknüpft.
 | 3 | [Datenmodell & Kennzahlen](docs/03-datenmodell-und-kennzahlen.md) | Verknüpfung über den LeiKa-Schlüssel, Reifegradmodell, KPI-Katalog |
 | 4 | [Architektur](docs/04-architektur.md) | Systemaufbau, Technologie, tägliche Aktualisierung, Betrieb |
 | 5 | [Sicherheit & Datenschutz](docs/05-sicherheit-datenschutz.md) | BSI IT-Grundschutz, DSGVO, BITV 2.0, Mitbestimmung |
-| 6 | [UX & Design](docs/06-ux-design.md) | Seitenstruktur, Visualisierungen, Export (PDF-Kurzbericht, CSV/XLSX), Barrierefreiheit, Designsystem |
+| 6 | [UX & Design](docs/06-ux-design.md) | Seitenstruktur, Visualisierungen, Export (einseitige PDF-Übersicht, CSV/XLSX), Barrierefreiheit, Designsystem |
 | 7 | [Offene Fragen & Entscheidungen](docs/07-offene-fragen.md) | Was vor dem Start geklärt werden muss |
 
 ## Technische Entwürfe

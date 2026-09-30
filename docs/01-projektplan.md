@@ -25,7 +25,7 @@ Messbare Projektziele:
 
 | Zielgruppe | Sicht | Zugang |
 |------------|-------|--------|
-| Bürgerinnen, Bürger, Unternehmen, Presse, Politik | **Öffentliche Sicht**: Gesamtstand, Themenfelder, Leistungssuche mit Link zum Onlinedienst, Trend, **Export als Kurzbericht (PDF) und Daten (CSV/XLSX)** | anonym, ohne Cookies |
+| Bürgerinnen, Bürger, Unternehmen, Presse, Politik | **Öffentliche Sicht**: Gesamtstand, Themenfelder, Leistungssuche mit Link zum Onlinedienst, Trend, **Export als kompakte Übersicht (PDF, 1 Seite) und Daten (CSV/XLSX)** | anonym, ohne Cookies |
 | Verwaltungsvorstand, Digitalisierungsteam | **Steuerungssicht**: Priorisierungsliste, Benchmark, Zielerreichung | intern, SSO |
 | Fachbereiche / Ämter | **Fachbereichssicht**: eigene Leistungen, Lücken, Datenqualitäts-Aufgaben | intern, SSO, gefiltert nach Organisationseinheit |
 | Portalredaktion | **Qualitätssicht**: fehlende LeiKa-Zuordnung, tote Links, Abweichungen zum PVOG, veraltete Texte | intern, SSO |
@@ -42,7 +42,7 @@ personenbezogene Daten werden nicht abgerufen.
 - Ein eigenes Reifegradmodell auf Leistungsebene (Stufe 0 bis 4)
 - Historisierung als täglicher Snapshot, damit Trends sichtbar werden
 - Öffentliches Frontend, internes Frontend und Open-Data-Export (CSV/JSON)
-- **Export des Dashboards:** tagesaktueller Kurzbericht „Digitalisierungsstand auf einen Blick"
+- **Export des Dashboards:** tagesaktuelle, kompakte Übersicht auf einer Seite
   als barrierefreies PDF, Datenexport je Ansicht (CSV/XLSX) und Diagramme als Bild (SVG/PNG)
 - Betriebs-, Sicherheits- und Datenschutzkonzept
 
@@ -78,7 +78,6 @@ Phase 4  Ausbau & Regelbetrieb    ░░░░░░░░░░░░░░░�
   LeiKa-Schlüssel? Wie viele davon kennt das FIM-Portal, wie viele das PVOG?
 - Das Reifegradmodell an echten Daten kalibrieren und mit den Fachbereichen abstimmen
 - Einen einfachen Prototyp mit 5 bis 8 Kern-Kennzahlen bauen
-- Inhalt des PDF-Kurzberichts mit dem Product Owner festlegen
 
 **Meilenstein M1:** Kennzahlenkatalog ist abgenommen und die Datenqualität bekannt.
 
@@ -86,7 +85,7 @@ Phase 4  Ausbau & Regelbetrieb    ░░░░░░░░░░░░░░░�
 - Produktive ETL-Strecke mit täglichem Lauf, Monitoring und Alarmierung
 - Datenmodell mit Staging, Core, Mart und Snapshots, dazu automatische Datentests
 - Internes Frontend mit SSO, Steuerungs-, Fachbereichs- und Qualitätssicht
-- Exportfunktion: PDF-Kurzbericht, CSV/XLSX je Ansicht, Diagramme als SVG/PNG
+- Exportfunktion: PDF-Übersicht (1 Seite), CSV/XLSX je Ansicht, Diagramme als SVG/PNG
 - Sicherheitsprüfung: Penetrationstest nach OWASP ASVS L2, Abgleich mit dem IT-Grundschutz-Check
 
 **Meilenstein M2:** Das interne Dashboard ist produktiv. Die Fachbereiche pflegen ihre Daten nach.
@@ -103,7 +102,7 @@ Phase 4  Ausbau & Regelbetrieb    ░░░░░░░░░░░░░░░�
 - Benchmark mit Vergleichskommunen (Essen, Duisburg, Oberhausen und weitere) über `open-ars`
 - Zielwerte und Prognose, z. B. „Wann erreichen wir 80 % Online-Verfügbarkeit?"
 - FIM-Prozesse und -Datenschemata als Reifegradmerkmal (Ende-zu-Ende-Fähigkeit)
-- Monatliches Archiv der Kurzberichte (PDF) für Politik und Presse
+- Monatliches Archiv der PDF-Übersichten
 - Quartalsweise Review der Kennzahlen mit dem Verwaltungsvorstand
 
 ## 1.5 Rollen

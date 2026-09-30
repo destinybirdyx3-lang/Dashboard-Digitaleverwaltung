@@ -157,10 +157,10 @@ CREATE TABLE mart.qualitaet_befund (
 );
 CREATE INDEX ON mart.qualitaet_befund (stichtag, befund);
 
--- Erzeugte Exporte (PDF-Kurzbericht, CSV/XLSX, Diagramme) je Stichtag
+-- Erzeugte Exporte (PDF-Übersicht, CSV/XLSX, Diagramme) je Stichtag
 CREATE TABLE mart.export (
     stichtag          date        NOT NULL,
-    art               text        NOT NULL CHECK (art IN ('kurzbericht_pdf', 'steuerungsbericht_pdf', 'leistungen_csv', 'leistungen_xlsx', 'kpi_csv', 'diagramm_svg')),
+    art               text        NOT NULL CHECK (art IN ('uebersicht_pdf', 'leistungen_csv', 'leistungen_xlsx', 'kpi_csv', 'diagramm_svg')),
     sichtbarkeit      text        NOT NULL CHECK (sichtbarkeit IN ('oeffentlich', 'intern')),
     pfad              text        NOT NULL,
     sha256            text        NOT NULL,
