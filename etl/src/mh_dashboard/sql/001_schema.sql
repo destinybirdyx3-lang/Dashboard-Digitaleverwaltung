@@ -233,6 +233,6 @@ BEGIN
     IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'mh_api_reader') THEN
         GRANT USAGE ON SCHEMA mart, core TO mh_api_reader;
         GRANT SELECT ON ALL TABLES IN SCHEMA mart TO mh_api_reader;
-        GRANT SELECT ON core.einrichtung TO mh_api_reader;
+        GRANT SELECT ON core.einrichtung, core.pvog_eintrag TO mh_api_reader;
     END IF;
 END $$;

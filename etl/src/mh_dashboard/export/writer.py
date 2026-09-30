@@ -94,11 +94,11 @@ def _write_csv(path: Path, headers: list[tuple[str, str]], rows: list[dict[str, 
     writer = csv.writer(buffer, delimiter=";", lineterminator="\r\n")
     writer.writerow([label for _, label in headers])
     for row in rows:
-        writer.writerow(["" if row.get(key) is None else _csv_safe(row.get(key)) for key, _ in headers])
+        writer.writerow(["" if row.get(key) is None else csv_safe(row.get(key)) for key, _ in headers])
     path.write_text("﻿" + buffer.getvalue(), encoding="utf-8")  # BOM für Excel
 
 
-def _csv_safe(value: Any) -> Any:
+def csv_safe(value: Any) -> Any:
     """Schutz vor CSV-/Formel-Injection beim Öffnen in Tabellenkalkulationen."""
     if isinstance(value, str) and value[:1] in ("=", "+", "-", "@", "\t", "\r"):
         return "'" + value
@@ -113,7 +113,7 @@ def _write_xlsx(path: Path, rows: list[dict[str, Any]], meta: dict[str, str]) ->
     for cell in ws[1]:
         cell.font = Font(bold=True)
     for row in rows:
-        ws.append([_csv_safe(row.get(key)) for key, _ in LEISTUNG_SPALTEN])
+        ws.append([csv_safe(row.get(key)) for key, _ in LEISTUNG_SPALTEN])
     if rows:
         ref = f"A1:{chr(ord('A') + len(LEISTUNG_SPALTEN) - 1)}{len(rows) + 1}"
         table = Table(displayName="Leistungen", ref=ref)
